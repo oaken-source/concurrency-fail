@@ -1,0 +1,27 @@
+
+    ____                                                      _____     _ _
+   / ___|___  _ __   ___ _   _ _ __ _ __ ___ _ __   ___ _   _|  ___|_ _(_) |
+  | |   / _ \| '_ \ / __| | | | '__| '__/ _ \ '_ \ / __| | | | |_ / _` | | |
+  | |__| (_) | | | | (__| |_| | |  | | |  __/ | | | (__| |_| |  _| (_| | | |
+   \____\___/|_| |_|\___|\__,_|_|  |_|  \___|_| |_|\___|\__, |_|  \__,_|_|_|
+                                                        |___/
+    Programmbeispiel            "Concurrency Fail"
+
+
+Beschreibung
+------------
+
+Dieser Programmrahmen demonstriert Ihnen die Problematik beim Nebenläufigen
+Zugriff auf geteilte Ressourcen, wie zum Beispiel einfache Variablen in
+mehreren Threads.
+
+Lesen und verstehen Sie den Programmrahmen und sein Laufzeitverhalten.
+Vergleichen Sie das Verhalten, wenn Sie den Programmrahmen auf einem Rechner
+mit mehreren CPUs in parallelität ausführen, oder wenn Sie ihn auf einem System
+mit nur einer CPU, bzw. unter Beschränkung der für die Threads verfügbaren CPUs
+ausführen.
+
+Sie können mit dem Werkzeug `taskset` auf Linux die Ausführung des Programms
+auf eine CPU beschränken:
+
+  $> taskset 1 ./concurrency
