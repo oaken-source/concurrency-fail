@@ -1,5 +1,5 @@
 concurrency
-concurrency.exe
 
 *.o
 *.obj
+*.exe
