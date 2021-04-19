@@ -3,7 +3,7 @@
 
 all: concurrency.exe
 
-concurrency.exe: concurrency.obj
+concurrency.exe: concurrency.obj thread_helper.obj
 	link $(LFLAGS) $** /out:concurrency.exe
 
 clean:
