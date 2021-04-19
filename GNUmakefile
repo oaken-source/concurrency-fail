@@ -3,7 +3,7 @@ BIN = concurrency
 
 CFLAGS = -Wall -Wextra -g -pthread
 
-SRC = concurrency.c \
+SRC = concurrency.c thread_helper.c
 
 all: $(BIN)
 
