@@ -5,23 +5,72 @@
   | |__| (_) | | | | (__| |_| | |  | | |  __/ | | | (__| |_| |  _| (_| | | |
    \____\___/|_| |_|\___|\__,_|_|  |_|  \___|_| |_|\___|\__, |_|  \__,_|_|_|
                                                         |___/
-    Programmbeispiel            "Concurrency Fail"
 
+Description
+-----------
 
-Beschreibung
-------------
+This exercise demonstrates the problems arising through concurrent or parallel
+access to a shared resource, such as a variable shared by two or more threads
+of the same process.
 
-Dieser Programmrahmen demonstriert Ihnen die Problematik beim Nebenläufigen
-Zugriff auf geteilte Ressourcen, wie zum Beispiel einfache Variablen in
-mehreren Threads.
+If two threads execute a piece of code that accesses the shared resource, these
+code sections are called "Critical Sections", and access needs to be
+syncronized to avoid corrupting the data.
 
-Lesen und verstehen Sie den Programmrahmen und sein Laufzeitverhalten.
-Vergleichen Sie das Verhalten, wenn Sie den Programmrahmen auf einem Rechner
-mit mehreren CPUs in parallelität ausführen, oder wenn Sie ihn auf einem System
-mit nur einer CPU, bzw. unter Beschränkung der für die Threads verfügbaren CPUs
-ausführen.
+To visualize this behaviour, this exercise contains code for two threads that
+independently and without synchronization increment and decrement a shared
+integer variable an equal number of times, such that after sequential (read:
+not concurrent) execution of both thread functions the final result should add
+up to zero. However, in practice, through concurrency and parallelism effects,
+the final result will not be zero for sufficiently large numbers of iterations.
 
-Sie können mit dem Werkzeug `taskset` auf Linux die Ausführung des Programms
-auf eine CPU beschränken:
+Exercise Questions
+------------------
 
-  $> taskset 1 ./concurrency
+Observe the difference in behaviour if the threads are run either in parallel
+on multiple CPUs or concurrently, but not in parallel, by limiting the program
+execution to a single CPU. On linux, this is possible by using the `taskset`
+utility. Other Operating Systems provide different means to achieve the same
+effect.
+
+Observe the behaviour of the program for different numbers of iterations by
+changing the value of the ITERATIONS preprocessor definition in concurrency.c.
+Why is the result sometimes zero for sufficiently small values of ITERATIONS?
+
+Content
+-------
+
+This repository contains the following source code files:
+
+concurrency.c
+~~~~~~~~~~~~~
+
+This file contains the main function with code to create and join the
+concurrent threads, as well as the individual thread functions.
+
+thread_helper.h
+~~~~~~~~~~~~~~~
+
+This file contains definitions for a small, portable (POSIX and Windows)
+threading interface, to avoid cluttering the code in concurrency.c with
+preprocessor definitions to distinguish between operating systems thread
+programming interfaces.
+
+Threads are very operating system specific, so each system presents its own
+programming interface. POSIX threads are supported on a number of UNIX-like
+operating systems, such as GNU/Linux, MacOS and others.
+
+thread_helper.c
+~~~~~~~~~~~~~~~
+
+This file contains the implementation of the functions declared in
+thread_helper.h, again distinguishing between operating systems.
+
+Credits
+-------
+
+This repository was created by the Operating Systems and Middleware Group at
+Hasso Plattner Institute, University of Potsdam, to help teach operating system
+behaviour and internals.
+
+For feedback and more information, contact bs@hpi.de

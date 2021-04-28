@@ -1,73 +1,88 @@
 
-// include stdio.h for printf
-//   see `man 3 printf` for synopsis
 #include <stdio.h>
 
-// this header provides abstract helper functions for threads on
-// windows (CreateThread) and POSIX threads (pthread_create)
+// this custom header provides portable functions for Windows and POSIX threads
 #include "thread_helper.h"
 
-// the number of times to increment / decrement the shared variable
-//   play with this value for different effects
-#define LIMIT 100000
+// define the number of times to increment / decrement the shared variable
+#define INCREMENTS 100000
 
-// a static shared variable, accessed by multiple threads concurrently
-//   marked volatile to prevent the compiler to make assumptions and optimizations
+// this is a static shared variable, accessed by multiple threads concurrently
 volatile int i = 0;
 
-// the thread function for thread 1
-//   POSIX thread functions have a type of `void*(*)(void*)`, meaning a single paramater
-//   of type `void*` and a return value of `void*`. `void*` is an untyped pointer,
-//   meaning a pointer to a location in memory that can't be dereferenced (followed)
-//   without typing it first through a cast, like `void *p; int i = *(int*)p`
-thread_helper_return_t func_a (void *arg)
+// this is the thread function for thread 1
+//
+//   POSIX thread functions have a type of `void*(*)(void*)`, meaning a single
+//   parameter of type `void*` and a return value of `void*`. `void*` is an
+//   untyped pointer, meaning a pointer to a location in memory that can't be
+//   dereferenced (followed) without typing it first through a cast, like
+//   `void *p; int i = *(int*)p`
+//
+//   Windows threads are very similar, with only a different return value of
+//   DWORD, an integer type instead of a pointer type. The
+//   thread_helper_return_t type is defined correctly depending on the
+//   operating system at build time.
+thread_helper_return_t
+func_a (void *arg)
 {
+  // this is the empty statement. It suppresses warnings about unused variables
   (void)arg;
 
+  // increment the shared variable in a loop
   int x;
-  for (x = 0; x < LIMIT; ++x)
-    i++;
+  for (x = 0; x < INCREMENTS; ++x)
+    {
+      // BEGIN CRITICAL SECTION
+      i++;
+      // END CRITICAL SECTION
+    }
 
-  return thread_helper_empty_result;
+  // return an empty result
+  return 0;
 }
 
-thread_helper_return_t func_b (void *arg)
+// this is the thread function for thread 2
+thread_helper_return_t
+func_b (void *arg)
 {
+  // this is the empty statement. It suppresses warnings about unused variables
   (void)arg;
 
+  // increment the shared variable in a loop
   int x;
-  for (x = 0; x < LIMIT; ++x)
-    i--;
+  for (x = 0; x < INCREMENTS; ++x)
+    {
+      // BEGIN CRITICAL SECTION
+      i--;
+      // END CRITICAL SECTION
+    }
 
-  return thread_helper_empty_result;
+  // return an empty result
+  return 0;
 }
 
-// the main function (program entry point)
+// this is the main function. Program execution begins here.
 int main(void)
 {
   // prepare two variables holding the references to the worker threads
   thread_helper_t thread_a;
   thread_helper_t thread_b;
 
-  // repeat forever
-  while (1)
-    {
-      // reset the shared variable
-      i = 0;
+  // create the two threads. The threads will start executing immediately.
+  thread_helper_create(&thread_a, &func_a, NULL);
+  thread_helper_create(&thread_b, &func_b, NULL);
 
-      // create the two threads
-      //    the threads will start executing immediately
-      thread_helper_create(&thread_a, &func_a);
-      thread_helper_create(&thread_b, &func_b);
+  // join the two threads. This blocks until the threads have terminated.
+  thread_helper_join(thread_a);
+  thread_helper_join(thread_b);
 
-      // join the two threads
-      //    this blocks until the threads have terminated.
-      thread_helper_join(thread_a);
-      thread_helper_join(thread_b);
-
-      // print the result
-      printf("%i\n", i);
-    }
+  // print the result.
+  //
+  //   Observe how the result of the computetaion will usually not add up to
+  //   the expected value of zero for large enough values of ITERATIONS. The
+  //   actual result is unpredictable and appears random, even though it is not
+  //   truly random.
+  printf("%i\n", i);
 
   return 0;
 }

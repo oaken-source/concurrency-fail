@@ -1,14 +1,16 @@
 
+# this Makefile is used by GNU make when compiling on Linux and MacOS
+
 BIN = concurrency
+OBJ = concurrency.o thread_helper.o
 
-CFLAGS = -Wall -Wextra -g -pthread
-
-SRC = concurrency.c thread_helper.c
+CFLAGS = -pthread -Wall -Wextra -g
+LDFLAGS = -pthread
 
 all: $(BIN)
 
-clean:
-	$(RM) $(BIN)
+$(BIN): $(OBJ)
+	$(CC) -o $@ $(LDFLAGS) $^
 
-$(BIN): $(SRC)
-	$(CC) -o $@ $(CFLAGS) $^
+clean:
+	$(RM) $(BIN) $(OBJ)
