@@ -62,7 +62,8 @@ func_b (void *arg)
 }
 
 // this is the main function. Program execution begins here.
-int main(void)
+int
+main(void)
 {
   // prepare two variables holding the references to the worker threads
   thread_helper_t thread_a;
